@@ -19,7 +19,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 
-	"github.com/google/sqlcommenter/go/core"
+	"github.com/observIQ/sqlcommenter/go/core"
 )
 
 var (
@@ -43,7 +43,7 @@ func (d *sqlCommenterDriver) Open(name string) (driver.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	return newSQLCommenterConn(rawConn, d.options), nil
+	return newSQLCommenterConnWithTx(rawConn, d.options), nil
 }
 
 func (d *sqlCommenterDriver) OpenConnector(name string) (driver.Connector, error) {
@@ -73,7 +73,7 @@ func (c *sqlCommenterConnector) Connect(ctx context.Context) (connection driver.
 	if err != nil {
 		return nil, err
 	}
-	return newSQLCommenterConn(connection, c.options), nil
+	return newSQLCommenterConnWithTx(connection, c.options), nil
 }
 
 func (c *sqlCommenterConnector) Driver() driver.Driver {

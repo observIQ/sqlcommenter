@@ -21,7 +21,7 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/google/sqlcommenter/go/core"
+	"github.com/observIQ/sqlcommenter/go/core"
 )
 
 var attemptedToAutosetApplication = false
@@ -29,6 +29,19 @@ var attemptedToAutosetApplication = false
 type sqlCommenterConn struct {
 	driver.Conn
 	options core.CommenterOptions
+}
+
+type sqlCommenterConnWithTx struct {
+	sqlCommenterConn
+}
+
+func newSQLCommenterConnWithTx(conn driver.Conn, options core.CommenterOptions) driver.Conn {
+	commenterConn := newSQLCommenterConn(conn, options)
+	if options.Driver.WithBeginTX {
+		return &sqlCommenterConnWithTx{*commenterConn}
+	}
+
+	return commenterConn
 }
 
 func newSQLCommenterConn(conn driver.Conn, options core.CommenterOptions) *sqlCommenterConn {
@@ -87,6 +100,15 @@ func (s *sqlCommenterConn) PrepareContext(ctx context.Context, query string) (st
 
 func (s *sqlCommenterConn) Raw() driver.Conn {
 	return s.Conn
+}
+
+func (s *sqlCommenterConnWithTx) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
+	begintxer, ok := s.Conn.(driver.ConnBeginTx)
+	if !ok {
+		return nil, driver.ErrSkip
+	}
+
+	return begintxer.BeginTx(ctx, opts)
 }
 
 // ***** Commenter Functions *****

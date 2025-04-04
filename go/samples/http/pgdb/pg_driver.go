@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/google/sqlcommenter/go/core"
-	gosql "github.com/google/sqlcommenter/go/database/sql"
 	_ "github.com/lib/pq"
+	"github.com/observIQ/sqlcommenter/go/core"
+	gosql "github.com/observIQ/sqlcommenter/go/database/sql"
 )
 
 func ConnectPG(connection string) *sql.DB {

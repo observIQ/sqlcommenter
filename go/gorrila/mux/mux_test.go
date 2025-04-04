@@ -5,8 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/google/sqlcommenter/go/core"
 	"github.com/gorilla/mux"
+	"github.com/observIQ/sqlcommenter/go/core"
 )
 
 func TestSQLCommenterMiddleware(t *testing.T) {
